@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin:0; padding:0; background:#f0f0ea; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .wrapper { max-width:660px; margin:0 auto; background:#ffffff; }
+
+  /* Header — distinct color from digest (dark teal instead of black) */
+  .header { background:#0a2a2a; padding:32px 40px; }
+  .header-label { font-size:11px; color:#4a8a7a; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+  .header-title { font-size:24px; font-weight:700; color:#ffffff; margin:0 0 6px 0; line-height:1.3; }
+  .header-meta { font-size:12px; color:#4a8a7a; margin-top:8px; }
+  .header-badge { display:inline-block; background:#1a4a3a; color:#4acea0; font-size:10px;
+                   letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px;
+                   border-radius:3px; margin-top:10px; }
+
+  /* Signal bar */
+  .signal-bar { background:#f0fff8; border-left:4px solid #1a7a5a; padding:16px 40px;
+                 font-size:12px; color:#1a5a3a; }
+
+  /* Sections */
+  .section { padding:28px 40px 0; }
+  .section-label { font-size:10px; color:#aaa; letter-spacing:2px; text-transform:uppercase;
+                    margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid #f0f0f0; }
+
+  /* Problem block */
+  .problem-block { background:#fff8f0; border-left:4px solid #cc5500; padding:16px 20px;
+                    margin-bottom:20px; border-radius:0 4px 4px 0; }
+  .problem-block p { margin:0; font-size:14px; color:#333; line-height:1.7; }
+
+  /* Spec sections */
+  .spec-block { margin-bottom:24px; }
+  .spec-heading { font-size:12px; font-weight:700; color:#0a2a2a; letter-spacing:0.5px;
+                   text-transform:uppercase; margin-bottom:8px; }
+  .spec-body { font-size:13px; color:#444; line-height:1.7; margin:0; }
+  .spec-body ul { margin:6px 0 0 0; padding-left:18px; }
+  .spec-body li { margin-bottom:5px; }
+
+  /* Code-style repo structure */
+  .repo-block { background:#f8f8f4; border:1px solid #e8e8e0; border-radius:4px;
+                 padding:16px 20px; font-family:'Courier New', monospace; font-size:12px;
+                 color:#333; line-height:1.8; margin-top:8px; }
+
+  /* Management brief — teal accent */
+  .management-block { background:#f0fff8; border:1px solid #c0e8d0; border-radius:4px;
+                       padding:20px 24px; margin-top:8px; }
+  .management-block p { margin:0 0 10px 0; font-size:13px; color:#1a4a3a; line-height:1.7; }
+  .management-block p:last-child { margin-bottom:0; }
+
+  /* Divider */
+  .divider { border:none; border-top:1px solid #f0f0f0; margin:0 40px; }
+
+  /* Footer */
+  .footer { background:#f5f5f0; padding:20px 40px; text-align:center; }
+  .footer p { margin:0; font-size:11px; color:#999; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-label">Informa — Build Spec</div>
+    <div class="header-title">Retrieval Accuracy</div>
+    <div class="header-meta">April 30, 2026 · Version 1 · Unsolved Pain Point</div>
+    <div class="header-badge">🔬 OSS Build Opportunity</div>
+  </div>
+
+  <!-- SIGNAL BAR -->
+  <div class="signal-bar">
+    <strong>2 corpus signals</strong> detected across 2 sources in the last 96 hours.
+    No clear OSS front runner identified for this specific problem.
+    <a href="https://venturebeat.com/data/rag-precision-tuning-can-quietly-cut-retrieval-accuracy-by-40-putting-agentic-pipelines-at-risk" style="color:#555;font-size:12px;margin-right:12px;">Source 1</a><a href="https://venturebeat.com/data/the-retrieval-rebuild-why-hybrid-retrieval-intent-tripled-as-enterprise-rag-programs-hit-the-scale-wall" style="color:#555;font-size:12px;margin-right:12px;">Source 2</a>
+  </div>
+
+  <!-- PROBLEM STATEMENT -->
+  <div class="section">
+    <div class="section-label">The Gap</div>
+    <div class="problem-block">
+      <p>When enterprise teams fine-tune RAG embedding models for precision — teaching them to distinguish near-identical sentences with opposite meanings — they unintentionally degrade broad retrieval generalization. Redis research (April 2026) quantified the regression: 8–9% accuracy loss on smaller models, up to 40% on mid-size production models. The failure is silent: fine-tuning metrics measure the task being trained for, not what happens to general retrieval across unrelated topics. The regression only surfaces in production, often inside agentic pipelines where a single retrieval error cascades into a chain of wrong actions. No existing OSS tool monitors this tradeoff, detects drift, or surfaces regression before it reaches production.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PRIOR ART -->
+  <div class="section">
+    <div class="section-label">Prior Art Scan</div>
+    <div class="spec-block">
+      <div class="spec-body"><p>LlamaIndex and LangChain both provide RAG pipeline tooling but treat retrieval as a black box — no precision/recall tradeoff monitoring. RAGAS (the leading RAG evaluation framework) measures answer faithfulness and context relevance after the fact, not structural near-miss rejection rates during embedding fine-tuning. ColBERT and MaxSim rerankers improve relevance benchmarks but are architecturally blind to the specific failure mode: structurally different sentences with identical word sets. Redis LangCache is implementing a two-stage verifier fix but it is not yet available and is tied to their proprietary stack. There is no OSS tool that: (1) benchmarks an embedding model's structural near-miss rejection rate before and after fine-tuning, (2) alerts when precision gains are trading off retrieval generalization, or (3) provides a drop-in two-stage verifier that runs independently of the underlying vector store.</p></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PROPOSED TOOL -->
+  <div class="section">
+    <div class="section-label">Proposed Tool</div>
+    <div class="spec-block">
+      <div class="spec-heading">retrieval-guard</div>
+      <div class="spec-body"><p>retrieval-guard is a lightweight Python library that sits between an embedding model and a RAG pipeline to detect, measure, and optionally correct the precision-generalization tradeoff. It provides a pre-tuning benchmark suite that establishes a retrieval generalization baseline, a post-tuning regression detector that flags when fine-tuning has degraded broad recall, and an optional two-stage verification layer that adds a token-level Transformer verifier for structural near-miss rejection without rebuilding the upstream pipeline.</p></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-heading">What It Does</div>
+      <div class="spec-body">
+        <ul>
+          <li>Benchmarks an embedding model's retrieval generalization score before and after fine-tuning using a standardized structural near-miss test suite (negation flips, role reversals, spatial flips, binding errors)</li><li>Emits a regression alert when the delta between pre- and post-tuning generalization scores exceeds a configurable threshold (default: 5%)</li><li>Provides a drop-in two-stage verifier: Stage 1 runs standard dense retrieval, Stage 2 runs a small Transformer verifier that compares query vs candidate at the token level to reject structural near-misses</li><li>Integrates as a wrapper around any HuggingFace-compatible embedding model — works with existing LangChain, LlamaIndex, or raw vector store setups</li><li>Outputs a structured JSON report: generalization score, failure mode breakdown (negation / spatial / binding), and recommended verification intensity (full / light / none)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-heading">What It Explicitly Does Not Do</div>
+      <div class="spec-body">
+        <ul>
+          <li>Replace the upstream vector store (Chroma, Weaviate, Qdrant, Pinecone) — it wraps, not replaces</li><li>Fine-tune embedding models itself — it evaluates and guards, not trains</li><li>Require changes to the retrieval index or document pipeline</li><li>Provide a managed cloud service or hosted API</li><li>Solve long-context or multi-hop retrieval problems — scope is structural near-miss rejection only</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- REPO SPEC -->
+  <div class="section">
+    <div class="section-label">Repo Specification</div>
+    <div class="spec-block">
+      <div class="spec-heading">Language & Stack</div>
+      <div class="spec-body"><p>Python 3.10+. Core dependencies: sentence-transformers (embedding model interface), torch (Transformer verifier), datasets (benchmark suite loading), numpy (scoring). Optional: langchain and llama-index adapters in extras. Chosen because the entire RAG/embedding ecosystem is Python-native and the target users (enterprise ML teams) are already in this stack. The verifier is a small fine-tuned cross-encoder (~50M params) distributed as a pre-trained HuggingFace model so teams do not need to train it themselves.</p></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-heading">Structure</div>
+      <div class="repo-block">retrieval-guard/
+├── src/
+│   └── retrieval_guard/
+│       ├── benchmark/         # Structural near-miss test suite
+│       │   ├── suite.py       # Negation, spatial, binding, role test cases
+│       │   └── scorer.py      # Generalization score computation
+│       ├── verifier/          # Two-stage verification layer
+│       │   ├── verifier.py    # Token-level Transformer verifier
+│       │   └── pipeline.py    # Drop-in wrapper: recall stage + verify stage
+│       ├── adapters/          # LangChain + LlamaIndex integration hooks
+│       │   ├── langchain.py
+│       │   └── llamaindex.py
+│       ├── reporter.py        # JSON regression report output
+│       └── cli.py             # CLI: benchmark, compare, report
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── examples/
+│   ├── basic_benchmark.py
+│   └── two_stage_pipeline.py
+├── pretrained/                # Pre-trained verifier model card
+├── docs/
+├── pyproject.toml
+└── README.md</div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-heading">Key Interfaces</div>
+      <div class="spec-body">
+        <ul>
+          <li>retrieval_guard.benchmark.run(model) → GeneralizationReport: benchmarks any sentence-transformers compatible model, returns structured score + failure mode breakdown</li><li>retrieval_guard.benchmark.compare(model, before_report) → RegressionAlert: compares current model state against a baseline report, emits alert if delta exceeds threshold</li><li>retrieval_guard.verifier.TwoStagePipeline(retriever, verifier_model) → drop-in retriever wrapper that adds structural verification as Stage 2, compatible with LangChain BaseRetriever interface</li><li>retrieval_guard.reporter.export(report, format='json'|'html'|'markdown') → saves structured regression report for CI/CD integration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TEST CRITERIA -->
+  <div class="section">
+    <div class="section-label">Test Criteria — What Passing Looks Like</div>
+    <div class="spec-block">
+      <div class="spec-body">
+        <ul>
+          <li>benchmark.run() correctly scores a baseline embedding model within ±2% of the Redis paper's reported generalization scores on the same test categories</li><li>benchmark.compare() fires a RegressionAlert when a fine-tuned model shows >5% generalization drop vs baseline — verified against a synthetic fine-tuned model with known regression</li><li>TwoStagePipeline rejects >80% of structural near-miss candidates (negation flips, role reversals) that a single-stage pipeline incorrectly accepts — tested on the benchmark suite</li><li>LangChain adapter passes integration test: drop-in replacement for a standard FAISS retriever with no changes to the calling code</li><li>CLI command `retrieval-guard benchmark --model <model_name>` runs end-to-end in under 60 seconds on a standard CPU</li><li>All unit tests pass with >90% coverage. No breaking changes to public API between minor versions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PERPETUAL MANAGEMENT BRIEF -->
+  <div class="section" style="padding-bottom:28px;">
+    <div class="section-label">Perpetual Management Brief</div>
+    <div class="management-block">
+      <p>Track corpus signal_count for 'retrieval accuracy' and 'rag precision' in the Informa TechOpportunity entity. If either crosses 8 signals without a competing OSS tool reaching >200 GitHub stars, prioritize shipping v1.0 and submitting to the LangChain and LlamaIndex integrations directories.</p><p>v2 trigger: if corpus signals begin referencing 'multi-hop retrieval degradation' or 'agentic retrieval cascade failures' as a distinct pattern from single-stage precision loss — expand the benchmark suite to cover multi-hop structural errors and add a Stage 3 (reasoning verifier) to the pipeline.</p><p>Monitor: Redis LangCache product updates. If they ship an OSS version of their two-stage verifier with a permissive license and active maintenance (>10 commits/month), evaluate deprecation. Until then, retrieval-guard is the only independent, vector-store-agnostic implementation of this architecture.</p><p>Deprecate if: a well-maintained project with >500 GitHub stars ships both the benchmark suite AND the two-stage verifier as a standalone library, not bundled inside a larger RAG framework. Framework-bundled solutions do not count — the gap is the standalone guard, not another end-to-end RAG tool.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Informa Intelligence · Build Spec v1 · April 30, 2026</p>
+    <p>informa@agentmail.to · Reply to confirm, request revision, or deprecate</p>
+  </div>
+
+</div>
+</body>
+</html>
