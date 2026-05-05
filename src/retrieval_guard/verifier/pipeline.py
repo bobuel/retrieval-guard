@@ -92,6 +92,9 @@ class TwoStagePipeline:
         """Detect retriever interface."""
         if callable(self.retriever) and not hasattr(self.retriever, "__class__"):
             return "callable"
+        # LangChain v0.2+ uses invoke(); older versions use get_relevant_documents()
+        if hasattr(self.retriever, "invoke") and hasattr(self.retriever, "vectorstore"):
+            return "langchain_invoke"
         if hasattr(self.retriever, "get_relevant_documents"):
             return "langchain"
         if hasattr(self.retriever, "retrieve"):
@@ -100,11 +103,24 @@ class TwoStagePipeline:
             return "callable"
         raise ValueError(
             f"Unsupported retriever type: {type(self.retriever)}. "
-            "Must have .retrieve(), .get_relevant_documents(), or be callable."
+            "Must have .invoke(), .retrieve(), .get_relevant_documents(), or be callable."
         )
 
     def _call_retriever(self, query: str) -> list[RetrievedDocument]:
         """Normalize retriever output to list[RetrievedDocument]."""
+        if self._retriever_type == "langchain_invoke":
+            docs = self.retriever.invoke(query)
+            return [
+                RetrievedDocument(
+                    text=d.page_content,
+                    score=d.metadata.get("score", 1.0),
+                    verifier_score=None,
+                    accepted=True,
+                    metadata=dict(d.metadata),
+                )
+                for d in docs[: self.top_k]
+            ]
+
         if self._retriever_type == "langchain":
             docs = self.retriever.get_relevant_documents(query)
             return [
@@ -185,9 +201,14 @@ class TwoStagePipeline:
 
         if texts_to_verify:
             scores = self.verifier.score_batch(query, texts_to_verify)
+            # Cross-encoder scores are raw logits — use relative threshold (margin from top score)
+            max_score = max(scores) if scores else 0.0
+            margin = self.verifier.rejection_threshold  # treat threshold as margin below top score
             for idx, score in zip(indices_to_verify, scores):
                 candidates[idx].verifier_score = score
-                candidates[idx].accepted = score >= self.verifier.rejection_threshold
+                # Accept if score is within `margin` of the top score
+                # e.g. threshold=1.0 means reject anything >1.0 logit below the best result
+                candidates[idx].accepted = (max_score - score) <= margin
 
         rejected = sum(1 for d in candidates if not d.accepted)
         logger.debug(f"Stage 2 rejected {rejected}/{len(candidates)} candidates")
