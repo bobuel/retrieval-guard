@@ -47,7 +47,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     print(f"{'='*50}\n")
 
     if args.output:
-        content = export(report, format="json", path=args.output)
+        export(report, format="json", path=args.output)
         print(f"[retrieval-guard] Baseline saved to {args.output}")
 
     return 0
@@ -55,8 +55,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 def cmd_compare(args: argparse.Namespace) -> int:
     from sentence_transformers import SentenceTransformer
-    from .benchmark import run, compare, GeneralizationReport
-    from .reporter import export
+    from .benchmark import compare, GeneralizationReport
 
     baseline_path = Path(args.baseline)
     if not baseline_path.exists():
@@ -84,19 +83,15 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
     print(f"\n{'='*50}")
     if alert.fired:
-        print(f"  🔴 REGRESSION ALERT FIRED")
+        print("  🔴 REGRESSION ALERT FIRED")
     else:
-        print(f"  🟢 NO REGRESSION DETECTED")
+        print("  🟢 NO REGRESSION DETECTED")
     print(f"  Delta:  {alert.delta:+.1%}  (threshold: {threshold:.1%})")
     print(f"  Before: {alert.before_score:.1%}  →  After: {alert.after_score:.1%}")
     print(f"  {alert.recommendation}")
     print(f"{'='*50}\n")
 
     if args.output:
-        after_report_data = {
-            "model_name": args.model,
-            "overall_score": alert.after_score,
-        }
         export_data = alert.to_dict()
         Path(args.output).write_text(json.dumps(export_data, indent=2))
         print(f"[retrieval-guard] Alert report saved to {args.output}")

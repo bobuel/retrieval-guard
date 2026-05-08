@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Optional, Protocol, runtime_checkable
+from typing import Any, Optional, Protocol, runtime_checkable
 
 from .verifier import StructuralVerifier
 
@@ -185,9 +185,16 @@ class TwoStagePipeline:
 
         if texts_to_verify:
             scores = self.verifier.score_batch(query, texts_to_verify)
+            max_score = max(scores) if scores else 0.0
+            # Model-agnostic relative margin: reject docs that score more than
+            # `rejection_threshold` logits below the top-scoring candidate.
+            # Works with raw logit models (e.g. ms-marco) where absolute
+            # thresholds are impractical due to unbounded score ranges.
+            # e.g. threshold=0.1 rejects docs with score < (max - 0.1).
+            margin = self.verifier.rejection_threshold
             for idx, score in zip(indices_to_verify, scores):
                 candidates[idx].verifier_score = score
-                candidates[idx].accepted = score >= self.verifier.rejection_threshold
+                candidates[idx].accepted = (max_score - score) <= margin
 
         rejected = sum(1 for d in candidates if not d.accepted)
         logger.debug(f"Stage 2 rejected {rejected}/{len(candidates)} candidates")

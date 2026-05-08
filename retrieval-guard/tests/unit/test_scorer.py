@@ -7,12 +7,10 @@ and a "broken" model (always fails) to test scoring logic.
 """
 
 import numpy as np
-import pytest
 from retrieval_guard.benchmark.scorer import (
     run,
     compare,
     GeneralizationReport,
-    RegressionAlert,
     _cosine_sim,
 )
 from retrieval_guard.benchmark.suite import BUILTIN_PAIRS
@@ -23,13 +21,13 @@ class PerfectMockModel:
     _name_or_path = "mock-perfect-model"
 
     def encode(self, texts, batch_size=32, show_progress_bar=False):
-        n = len(texts)
+        len(texts)
         # Deterministic embeddings based on text content
         rng = np.random.default_rng(42)
         embeddings = []
         for text in texts:
             # Query and positive share a base vector; hard_negative is orthogonal
-            seed = sum(ord(c) for c in text[:20])
+            sum(ord(c) for c in text[:20])
             vec = rng.standard_normal(64)
             vec = vec / (np.linalg.norm(vec) + 1e-10)
             embeddings.append(vec)
@@ -41,7 +39,7 @@ class PerfectOracle:
     _name_or_path = "mock-oracle"
 
     def encode(self, texts, batch_size=32, show_progress_bar=False):
-        n_pairs = len(BUILTIN_PAIRS)
+        len(BUILTIN_PAIRS)
         # texts = [q0..qN, p0..pN, neg0..negN]
         n = len(texts)
         embeddings = np.zeros((n, 4))

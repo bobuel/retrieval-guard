@@ -1,7 +1,6 @@
 """Unit tests for the benchmark test suite."""
 
-import pytest
-from retrieval_guard.benchmark.suite import get_suite, BUILTIN_PAIRS, Category
+from retrieval_guard.benchmark.suite import get_suite, BUILTIN_PAIRS
 
 
 def test_builtin_pairs_exist():

@@ -35,7 +35,9 @@ class StructuralVerifier:
 
     Args:
         model_name_or_path: HuggingFace model ID or local path.
-        rejection_threshold: Score below which a candidate is rejected.
+        rejection_threshold: Margin used for rejection. In the pipeline, docs
+            scoring more than this below the top candidate are rejected.
+            Default 0.1 is calibrated for cross-encoder/ms-marco-MiniLM-L-6-v2.
             Default is 0.0 — tune on your domain.
         device: "cpu", "cuda", or "mps". Auto-detected if None.
         max_length: Max token length for the verifier input.
@@ -44,7 +46,7 @@ class StructuralVerifier:
     def __init__(
         self,
         model_name_or_path: str = DEFAULT_VERIFIER_MODEL,
-        rejection_threshold: float = 0.0,
+        rejection_threshold: float = 0.1,
         device: Optional[str] = None,
         max_length: int = 256,
     ):
@@ -104,8 +106,8 @@ class StructuralVerifier:
             logits = self.model(**features).logits
 
         if logits.shape[-1] == 1:
-            return [float(l[0]) for l in logits]
-        return [float(l.mean()) for l in logits]
+            return [float(logit[0]) for logit in logits]
+        return [float(logit.mean()) for logit in logits]
 
     def is_near_miss(self, query: str, candidate: str) -> bool:
         """Return True if the candidate should be rejected as a structural near-miss."""

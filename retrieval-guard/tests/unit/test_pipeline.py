@@ -5,9 +5,7 @@ Uses a mock verifier and mock retriever to test Stage 2 filtering logic
 without needing a real Transformer model.
 """
 
-import pytest
 from retrieval_guard.verifier.pipeline import TwoStagePipeline, RetrievedDocument
-from retrieval_guard.verifier.verifier import StructuralVerifier
 
 
 class MockVerifier:

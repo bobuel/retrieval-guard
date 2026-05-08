@@ -9,7 +9,7 @@ Test categories (per Redis April 2026 research):
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 Category = Literal["negation", "role_reversal", "spatial", "binding"]

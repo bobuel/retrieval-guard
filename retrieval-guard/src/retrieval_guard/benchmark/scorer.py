@@ -13,12 +13,12 @@ GeneralizationReport contains:
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
 
-from .suite import NearMissPair, get_suite, Category
+from .suite import get_suite, Category
 
 if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
