@@ -4,6 +4,12 @@ Experimental Python utilities for measuring retrieval regressions and filtering 
 
 > Status: working research prototype. The public API, scoring behavior, and defaults may change. This is not a hosted service or a guarantee of factual correctness.
 
+## Why I built it
+
+Retrieved text can look relevant while changing a detail that matters. I wanted a way to test those near misses and make the filtering step inspectable before another system relies on the result. The design separates benchmarking, verification, and reporting so each can be evaluated on its own.
+
+[More of my work](https://aydoon.com/) · [Runnable examples](examples/)
+
 ## What is implemented
 
 | Capability | Current implementation |
@@ -124,7 +130,7 @@ The default cross-encoder is a general relevance baseline; tune and evaluate the
 
 ## Verification
 
-Pull requests and `codex/**` branches run linting plus unit and adapter-integration tests on Python 3.10, 3.11, and 3.12. The model-download suite is a separate manual workflow so routine CI remains deterministic.
+Pull requests, `main`, and `codex/**` branches run linting plus unit and adapter-integration tests on Python 3.10, 3.11, and 3.12. Adapter tests exercise interface behavior with test doubles; they do not measure retrieval quality on real models. The model-download suite is a separate manual workflow, and its results should be reported separately from routine CI.
 
 ```bash
 ruff check src tests
