@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "retrieval-guard"
+version = "0.1.0"
+description = "Experimental utilities for evaluating and guarding retrieval behavior in RAG systems."
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = [
+    "rag",
+    "retrieval",
+    "embedding",
+    "fine-tuning",
+    "regression",
+    "near-miss",
+    "llm",
+    "evaluation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "sentence-transformers>=2.7.0",
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+    "numpy>=1.24.0",
+    "datasets>=2.18.0",
+]
+
+[project.optional-dependencies]
+langchain = [
+    "langchain-core>=0.2.0",
+]
+llamaindex = [
+    "llama-index-core>=0.10.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4.0",
+    "mypy>=1.8.0",
+]
+all = [
+    "langchain-core>=0.2.0",
+    "llama-index-core>=0.10.0",
+]
+
+[project.scripts]
+retrieval-guard = "retrieval_guard.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/bobuel/retrieval-guard"
+Repository = "https://github.com/bobuel/retrieval-guard"
+Issues = "https://github.com/bobuel/retrieval-guard/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/retrieval_guard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=retrieval_guard --cov-report=term-missing --cov-fail-under=55"
+markers = [
+    "model: downloads and exercises real embedding and cross-encoder models",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+
